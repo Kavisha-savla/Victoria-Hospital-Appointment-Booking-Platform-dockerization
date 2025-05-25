@@ -1,20 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Admin Login</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <title>Admin Login - Victoria Hospital</title>
+  <link rel="stylesheet" href="/css/adminLogin.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 </head>
 <body>
-  <h2>Admin Login</h2>
-  <form method="POST" action="/admin/login">
-    <label for="email">Email:</label><br>
-    <input type="email" id="email" name="email" required><br><br>
 
-    <label for="password">Password:</label><br>
-    <input type="password" id="password" name="password" required><br><br>
+  
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <img src="/images/hospital-logo.jpg" alt="Hospital Logo" />
+      <span class="main-heading">Victoria Multi Speciality Hospital</span>
+    </div>
+  </nav>
 
-    <button type="submit">Login</button>
-  </form>
+  
+  <div class="login-page">
+    <div class="login-container">
+      <h2>Admin Login</h2>
+      <form method="POST" action="/admin/login">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required />
+
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required />
+
+        <button type="submit">Login</button>
+      </form>
+    </div>
+  </div>
+
 </body>
 </html>
