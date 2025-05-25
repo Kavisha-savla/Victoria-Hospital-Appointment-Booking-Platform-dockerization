@@ -200,3 +200,39 @@ body {
     justify-content: center;
     gap: 15px;
   }
+  .top-actions {
+  display: flex;
+  justify-content: center;
+  margin: 30px 0 20px 0;
+}
+
+.top-actions-center {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center;
+  align-items: center;
+}
+
+.top-actions .search-bar {
+  padding: 10px 15px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  min-width: 280px;
+}
+
+.top-actions .btn {
+  background-color: #007bcd;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.top-actions .btn:hover {
+  background-color: #005fa3;
+}
