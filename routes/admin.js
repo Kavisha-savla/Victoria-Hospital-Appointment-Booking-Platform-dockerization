@@ -26,21 +26,47 @@ router.get('/api/appointments', async (req, res) => {
   }
 });
 router.post('/cancel/:id', async (req, res) => {
-  const appt = await Appointment.findById(req.params.id);
-  appt.status = 'cancelled';
-  await appt.save();
-  res.sendStatus(200);
+  const io = req.app.get('io');
+
+  try {
+    const appointment = await Appointment.findByIdAndUpdate(
+      req.params.id,
+      { status: 'cancelled' },
+      { new: true }
+    );
+
+    io.emit('appointment:cancelled', appointment);
+
+    res.send('Cancelled');
+  } catch {
+    res.status(500).send('Error cancelling appointment');
+  }
 });
 
+
 router.post('/reschedule/:id', async (req, res) => {
+  const io = req.app.get('io');
   const { newDate, newTime } = req.body;
-  const appt = await Appointment.findById(req.params.id);
-  appt.date = newDate;
-  appt.time = newTime;
-  appt.status = 'rescheduled';
-  await appt.save();
-  res.sendStatus(200);
+
+  try {
+    const appointment = await Appointment.findByIdAndUpdate(
+      req.params.id,
+      {
+        date: newDate,
+        time: newTime,
+        status: 'rescheduled'
+      },
+      { new: true }
+    );
+
+    io.emit('appointment:rescheduled', appointment);
+
+    res.send('Rescheduled');
+  } catch {
+    res.status(500).send('Error rescheduling appointment');
+  }
 });
+
 
 router.get('/appointments/booked-times', async (req, res) => {
   const { date } = req.query;
@@ -48,5 +74,6 @@ router.get('/appointments/booked-times', async (req, res) => {
   const bookedTimes = appointments.map(a => a.time);
   res.json(bookedTimes);
 });
+
 
 module.exports = router;
