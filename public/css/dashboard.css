@@ -202,4 +202,6 @@ body {
     justify-content: center;
     gap: 15px;
   }
-  
+  .appointment-card:last-child {
+  margin-bottom: 200px; 
+}
