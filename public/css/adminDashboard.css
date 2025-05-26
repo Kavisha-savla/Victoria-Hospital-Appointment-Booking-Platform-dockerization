@@ -51,7 +51,10 @@ body {
     margin: 0 auto;
     padding: 40px 20px;
     text-align: center;
-  }
+  padding-bottom: 150px; 
+  overflow-y: auto;
+}
+
   
   .dashboard h2 {
     color: #003366;
@@ -266,4 +269,10 @@ body {
 }
 .stat-box.active {
   outline: 3px solid #007bcd;
+}
+.cancelled-card {
+  opacity: 0.6;
+  background-color: #f7f7f7;
+  border-left: 6px solid #999;
+  pointer-events: none;
 }

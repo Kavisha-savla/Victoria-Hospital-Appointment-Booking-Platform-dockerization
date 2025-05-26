@@ -19,6 +19,7 @@
 
   <main class="dashboard">
     <h2>Admin Dashboard</h2>
+
     <div class="stats-widget">
       <div class="stat-box booked" onclick="filterByStatus('booked')">
         Booked: <span id="count-booked">0</span>
@@ -32,6 +33,7 @@
     </div>
 
     <p>You can export all appointments using the button below.</p>
+
     <div class="top-actions">
       <button onclick="exportAppointmentsToCSV()" class="btn">Export as CSV</button>
     </div>
@@ -60,52 +62,84 @@
     }
 
     function renderAppointments(data) {
-      const container = document.getElementById('appointmentsTable');
+      const container = document.getElementById("appointmentsTable");
       container.innerHTML = '';
+
       if (data.length === 0) {
         container.innerHTML = '<p>No appointments found.</p>';
         return;
       }
 
       data.forEach(app => {
+        const item = document.createElement('div');
         const status = (app.status || 'booked').toLowerCase();
         const dateStr = new Date(app.date).toLocaleDateString();
-        const actions = status !== 'cancelled' ? `
-          <div class="card-buttons">
-            <button onclick="cancelAppointment('${app._id}')">Cancel</button>
-            <button onclick="toggleReschedule('${app._id}')">Reschedule</button>
-          </div>
-          <div id="reschedule-${app._id}" class="reschedule-form" style="display: none;">
-            <input type="date" id="newDate-${app._id}" />
-            <select id="newTime-${app._id}">
-              <option value="">-- Select Time --</option>
-              <option value="09:00 AM">09:00 AM</option>
-              <option value="10:00 AM">10:00 AM</option>
-              <option value="11:00 AM">11:00 AM</option>
-              <option value="12:00 PM">12:00 PM</option>
-              <option value="02:00 PM">02:00 PM</option>
-              <option value="03:00 PM">03:00 PM</option>
-              <option value="04:00 PM">04:00 PM</option>
-              <option value="05:00 PM">05:00 PM</option>
-            </select>
-            <button onclick="rescheduleAppointment('${app._id}')">Submit</button>
-          </div>` : '';
+        const showActions = status !== 'cancelled';
+        item.className = 'appointment-card' + (status === 'cancelled' ? ' cancelled-card' : '');
 
-        container.innerHTML += `
-          <div class="appointment-card">
-            <div class="row-line">
-              <span><strong>Name:</strong> ${app.name}</span>
-              <span><strong>Phone:</strong> ${app.phone}</span>
-              <span><strong>Date:</strong> ${dateStr}</span>
+        let buttonsHTML = '';
+        let rescheduleFormHTML = '';
+
+        if (showActions) {
+          buttonsHTML = `
+            <div class="card-buttons">
+              <button onclick="cancelAppointment('${app._id}')">Cancel</button>
+              <button onclick="toggleReschedule('${app._id}')">Reschedule</button>
             </div>
-            <div class="row-line">
-              <span><strong>Time:</strong> ${app.time}</span>
-              <span><strong>Department:</strong> ${app.department}</span>
-              <span><strong>Status:</strong> ${status}</span>
+          `;
+          rescheduleFormHTML = `
+            <div id="reschedule-${app._id}" class="reschedule-form" style="display: none;">
+              <input type="date" id="newDate-${app._id}" min="${new Date().toISOString().split('T')[0]}" onchange="handleRescheduleDateChange('${app._id}')" />
+              <select id="newTime-${app._id}">
+                <option value="">-- Select Time --</option>
+                <option value="09:00 AM">09:00 AM</option>
+                <option value="10:00 AM">10:00 AM</option>
+                <option value="11:00 AM">11:00 AM</option>
+                <option value="12:00 PM">12:00 PM</option>
+                <option value="02:00 PM">02:00 PM</option>
+                <option value="03:00 PM">03:00 PM</option>
+                <option value="04:00 PM">04:00 PM</option>
+                <option value="05:00 PM">05:00 PM</option>
+              </select>
+              <button onclick="rescheduleAppointment('${app._id}')">Submit</button>
             </div>
-            ${actions}
-          </div>`;
+          `;
+        }
+
+        item.innerHTML = `
+          <div class="row-line">
+            <span><strong>Name:</strong> ${app.name}</span>
+            <span><strong>Phone:</strong> ${app.phone}</span>
+            <span><strong>Date:</strong> ${dateStr}</span>
+          </div>
+          <div class="row-line">
+            <span><strong>Time:</strong> ${app.time}</span>
+            <span><strong>Department:</strong> ${app.department}</span>
+            <span><strong>Status:</strong> ${status}</span>
+          </div>
+          ${buttonsHTML}
+          ${rescheduleFormHTML}
+        `;
+        container.appendChild(item);
       });
+    }
+
+    async function handleRescheduleDateChange(id) {
+      const date = document.getElementById(`newDate-${id}`).value;
+      const timeSelect = document.getElementById(`newTime-${id}`);
+      if (!date) return;
+
+      try {
+        const res = await fetch(`/appointments/booked-times?date=${date}`);
+        const booked = await res.json();
+        [...timeSelect.options].forEach(opt => {
+          if (!opt.value) return;
+          opt.disabled = booked.includes(opt.value);
+          opt.textContent = booked.includes(opt.value) ? `${opt.value} (Booked)` : opt.value;
+        });
+      } catch (err) {
+        console.error("Error fetching booked times:", err);
+      }
     }
 
     function renderStats(data) {
@@ -162,6 +196,7 @@
       window.location.href = "/admin/login";
     }
 
+    // Socket.IO handlers
     socket.on('appointment:booked', (appt) => {
       appointmentsCache.push(appt);
       renderStats(appointmentsCache);
@@ -169,17 +204,10 @@
     });
 
     socket.on('appointment:cancelled', (appt) => {
-  appointmentsCache = appointmentsCache.map(a =>
-    a._id === appt._id ? appt : a
-  );
-  renderStats(appointmentsCache);
-  if (!currentFilter || currentFilter === 'cancelled') {
-    const visibleData = currentFilter
-      ? appointmentsCache.filter(a => (a.status || 'booked') === currentFilter)
-      : appointmentsCache;
-    renderAppointments(visibleData);
-  }
-});
+      appointmentsCache = appointmentsCache.map(a => a._id === appt._id ? appt : a);
+      renderStats(appointmentsCache);
+      applyFilter();
+    });
 
     socket.on('appointment:rescheduled', (appt) => {
       appointmentsCache = appointmentsCache.map(a => a._id === appt._id ? appt : a);

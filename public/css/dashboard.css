@@ -51,6 +51,8 @@ body {
     margin: 0 auto;
     padding: 40px 20px;
     text-align: center;
+    padding-bottom: 150px; 
+    overflow-y: auto;
   }
   
   .dashboard h2 {
@@ -200,4 +202,6 @@ body {
     justify-content: center;
     gap: 15px;
   }
-  
+  .appointment-card:last-child {
+  margin-bottom: 200px; 
+}

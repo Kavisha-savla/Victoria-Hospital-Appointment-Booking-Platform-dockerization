@@ -68,4 +68,12 @@ router.post('/reschedule/:id', async (req, res) => {
 });
 
 
+router.get('/appointments/booked-times', async (req, res) => {
+  const { date } = req.query;
+  const appointments = await Appointment.find({ date });
+  const bookedTimes = appointments.map(a => a.time);
+  res.json(bookedTimes);
+});
+
+
 module.exports = router;
