@@ -34,7 +34,7 @@ router.post('/book', async (req, res) => {
       <p><strong>Date:</strong> ${new Date(date).toDateString()}</p>
       <p><strong>Time:</strong> ${time}</p>
     `);
-
+    console.log("🔴 EMIT: appointment:booked");
     io.emit('appointment:booked', appointment); // Real-time event
     res.status(201).json({ message: "Appointment booked and email sent." });
   } catch (e) {
