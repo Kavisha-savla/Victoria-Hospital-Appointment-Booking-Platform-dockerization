@@ -55,43 +55,77 @@
       }
     };
 
-    function renderAppointments(data) {
-      const existing = document.getElementById('appointmentsTable');
-      if (existing) existing.remove();
+   function renderAppointments(data) {
+  const existing = document.getElementById('appointmentsTable');
+  if (existing) existing.remove();
 
-      const container = document.createElement('div');
-      container.id = "appointmentsTable";
-      container.className = "appointments-container";
+  const container = document.createElement('div');
+  container.id = "appointmentsTable";
+  container.className = "appointments-container";
 
-      document.querySelector('.dashboard').appendChild(container);
-      container.innerHTML = '';
+  document.querySelector('.dashboard').appendChild(container);
+  container.innerHTML = '';
 
-      if (data.length === 0) {
-        container.innerHTML = '<p>No appointments found.</p>';
-        return;
-      }
+  if (data.length === 0) {
+    container.innerHTML = '<p>No appointments found.</p>';
+    return;
+  }
 
-      data.forEach(app => {
-        const item = document.createElement('div');
-        item.className = 'appointment-card';
-        const dateStr = new Date(app.date).toLocaleDateString();
+  data.forEach(app => {
+    const item = document.createElement('div');
+    item.className = 'appointment-card';
+    const dateStr = new Date(app.date).toLocaleDateString();
+    const status = (app.status || 'booked').toLowerCase();
+    const showActions = status !== 'cancelled';
 
-        item.innerHTML = `
-          <div class="row-line">
-            <span><strong>Name:</strong> ${app.name}</span>
-            <span><strong>Phone:</strong> ${app.phone}</span>
-            <span><strong>Date:</strong> ${dateStr}</span>
-          </div>
-          <div class="row-line">
-            <span><strong>Time:</strong> ${app.time}</span>
-            <span><strong>Department:</strong> ${app.department}</span>
-            <span><strong>Status:</strong> ${app.status || 'booked'}</span>
-          </div>
-        `;
+    let buttonsHTML = '';
+    let rescheduleFormHTML = '';
 
-        container.appendChild(item);
-      });
+    if (showActions) {
+      buttonsHTML = `
+        <div class="card-buttons">
+          <button onclick="cancelAppointment('${app._id}')">Cancel</button>
+          <button onclick="toggleReschedule('${app._id}')">Reschedule</button>
+        </div>
+      `;
+
+      rescheduleFormHTML = `
+        <div id="reschedule-${app._id}" class="reschedule-form" style="display: none;">
+          <input type="date" id="newDate-${app._id}" />
+          <select id="newTime-${app._id}">
+            <option value="">-- Select Time --</option>
+            <option value="09:00 AM">09:00 AM</option>
+            <option value="10:00 AM">10:00 AM</option>
+            <option value="11:00 AM">11:00 AM</option>
+            <option value="12:00 PM">12:00 PM</option>
+            <option value="02:00 PM">02:00 PM</option>
+            <option value="03:00 PM">03:00 PM</option>
+            <option value="04:00 PM">04:00 PM</option>
+            <option value="05:00 PM">05:00 PM</option>
+          </select>
+          <button onclick="rescheduleAppointment('${app._id}')">Submit</button>
+        </div>
+      `;
     }
+
+    item.innerHTML = `
+      <div class="row-line">
+        <span><strong>Name:</strong> ${app.name}</span>
+        <span><strong>Phone:</strong> ${app.phone}</span>
+        <span><strong>Date:</strong> ${dateStr}</span>
+      </div>
+      <div class="row-line">
+        <span><strong>Time:</strong> ${app.time}</span>
+        <span><strong>Department:</strong> ${app.department}</span>
+        <span><strong>Status:</strong> ${status}</span>
+      </div>
+      ${buttonsHTML}
+      ${rescheduleFormHTML}
+    `;
+
+    container.appendChild(item);
+  });
+}
 
     function renderStats(data) {
       const booked = data.filter(a => (a.status || 'booked') === 'booked').length;
@@ -117,6 +151,47 @@
         currentFilter = status;
         document.querySelector(`.stat-box.${status}`).classList.add('active');
       }
+    }
+
+    function cancelAppointment(id) {
+      fetch(`/admin/cancel/${id}`, {
+        method: 'POST'
+      })
+        .then(() => {
+          alert("Appointment cancelled.");
+          window.onload();
+        })
+        .catch(err => {
+          console.error("Cancel failed:", err);
+        });
+    }
+
+    function toggleReschedule(id) {
+      const form = document.getElementById(`reschedule-${id}`);
+      form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function rescheduleAppointment(id) {
+      const newDate = document.getElementById(`newDate-${id}`).value;
+      const newTime = document.getElementById(`newTime-${id}`).value;
+
+      if (!newDate || !newTime) {
+        alert("Please select both date and time.");
+        return;
+      }
+
+      fetch(`/admin/reschedule/${id}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ newDate, newTime })
+      })
+        .then(() => {
+          alert("Appointment rescheduled.");
+          window.onload();
+        })
+        .catch(err => {
+          console.error("Reschedule failed:", err);
+        });
     }
 
     function exportAppointmentsToCSV() {

@@ -25,5 +25,21 @@ router.get('/api/appointments', async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 });
+router.post('/cancel/:id', async (req, res) => {
+  const appt = await Appointment.findById(req.params.id);
+  appt.status = 'cancelled';
+  await appt.save();
+  res.sendStatus(200);
+});
+
+router.post('/reschedule/:id', async (req, res) => {
+  const { newDate, newTime } = req.body;
+  const appt = await Appointment.findById(req.params.id);
+  appt.date = newDate;
+  appt.time = newTime;
+  appt.status = 'rescheduled';
+  await appt.save();
+  res.sendStatus(200);
+});
 
 module.exports = router;
