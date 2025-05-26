@@ -6,11 +6,11 @@ const sendEmail = require('../utils/mailer');
 const User = require('../models/user');
 
 router.post('/book', async (req, res) => {
+  const io = req.app.get('io');
   const {
     userId, name, age, phone, gender, department,
     service, date, time
   } = req.body;
-  const io = req.app.get('io');
 
   if (!mongoose.Types.ObjectId.isValid(userId)) {
     return res.status(400).json({ error: 'Invalid user ID format.' });
@@ -34,8 +34,8 @@ router.post('/book', async (req, res) => {
       <p><strong>Date:</strong> ${new Date(date).toDateString()}</p>
       <p><strong>Time:</strong> ${time}</p>
     `);
-    console.log("🔴 EMIT: appointment:booked");
-    io.emit('appointment:booked', appointment); // Real-time event
+
+    io.emit('appointment:booked', appointment);
     res.status(201).json({ message: "Appointment booked and email sent." });
   } catch (e) {
     console.error("Booking error:", e);
@@ -47,20 +47,25 @@ router.post('/cancel/:id', async (req, res) => {
   const io = req.app.get('io');
 
   try {
-    const appointment = await Appointment.findByIdAndUpdate(req.params.id, { status: 'cancelled' });
-    const user = await User.findById(appointment.userId);
+    const appointment = await Appointment.findByIdAndUpdate(
+      req.params.id,
+      { status: 'cancelled' },
+      { new: true }
+    );
 
+    const user = await User.findById(appointment.userId);
     await sendEmail(user.email, "Appointment Cancelled", `
       <h3>Your appointment has been cancelled.</h3>
       <p><strong>Service:</strong> ${appointment.service}</p>
     `);
 
-    io.emit('appointment:cancelled', appointment); // Real-time event
+    io.emit('appointment:cancelled', appointment); // ✅ Live update
     res.send('Appointment cancelled and email sent.');
   } catch {
     res.status(500).send('Error cancelling appointment');
   }
 });
+
 
 router.post('/reschedule/:id', async (req, res) => {
   const io = req.app.get('io');
@@ -80,7 +85,7 @@ router.post('/reschedule/:id', async (req, res) => {
       <p><strong>New Time:</strong> ${newTime}</p>
     `);
 
-    io.emit('appointment:rescheduled', appointment); // Real-time event
+    io.emit('appointment:rescheduled', appointment);
     res.send('Appointment rescheduled and email sent.');
   } catch {
     res.status(500).send('Error rescheduling appointment');

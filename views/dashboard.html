@@ -22,7 +22,7 @@
     <input type="text" id="searchInput" placeholder="Search by service or date..." class="search-bar" />
     <div id="appointmentsTable" class="appointments-container"></div>
   </main>
-   <script src="https://cdn.botpress.cloud/webchat/v2.4/inject.js"></script>
+<script src="https://cdn.botpress.cloud/webchat/v2.4/inject.js"></script>
   <script src="https://files.bpcontent.cloud/2025/05/07/06/20250507064944-XWFWU46K.js"></script> 
   <script src="/socket.io/socket.io.js"></script>
   <script>
@@ -118,8 +118,8 @@
     }
 
     function cancelAppointment(id) {
-      alert("Appoinment Cancelled!");
-      fetch(`/appointments/cancel/${id}`, { method: 'POST' });
+      fetch(`/appointments/cancel/${id}`, { method: 'POST' })
+        .then(() => fetchAndRenderAppointments());
     }
 
     function toggleReschedule(id) {
@@ -149,7 +149,6 @@
       });
     });
 
-    // Real-time refresh
     socket.on('appointment:booked', fetchAndRenderAppointments);
     socket.on('appointment:cancelled', fetchAndRenderAppointments);
     socket.on('appointment:rescheduled', fetchAndRenderAppointments);
