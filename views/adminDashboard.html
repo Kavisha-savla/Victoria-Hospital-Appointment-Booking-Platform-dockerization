@@ -77,6 +77,7 @@
     const dateStr = new Date(app.date).toLocaleDateString();
     const status = (app.status || 'booked').toLowerCase();
     const showActions = status !== 'cancelled';
+    item.className = 'appointment-card' + (status === 'cancelled' ? ' cancelled-card' : '');
 
     let buttonsHTML = '';
     let rescheduleFormHTML = '';
@@ -91,7 +92,7 @@
 
       rescheduleFormHTML = `
         <div id="reschedule-${app._id}" class="reschedule-form" style="display: none;">
-          <input type="date" id="newDate-${app._id}" />
+          <input type="date" id="newDate-${app._id}" min="${new Date().toISOString().split('T')[0]}" onchange="handleRescheduleDateChange('${app._id}')" />
           <select id="newTime-${app._id}">
             <option value="">-- Select Time --</option>
             <option value="09:00 AM">09:00 AM</option>
@@ -125,6 +126,27 @@
 
     container.appendChild(item);
   });
+}
+    async function handleRescheduleDateChange(id) {
+  const date = document.getElementById(`newDate-${id}`).value;
+  const timeSelect = document.getElementById(`newTime-${id}`);
+
+  if (!date) return;
+
+  try {
+    const res = await fetch(`/appointments/booked-times?date=${date}`);
+    const booked = await res.json();
+
+    [...timeSelect.options].forEach(opt => {
+      if (!opt.value) return;
+      opt.disabled = booked.includes(opt.value);
+      opt.textContent = booked.includes(opt.value)
+        ? `${opt.value} (Booked)`
+        : opt.value;
+    });
+  } catch (err) {
+    console.error("Error fetching booked times:", err);
+  }
 }
 
     function renderStats(data) {

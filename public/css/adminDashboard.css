@@ -267,3 +267,9 @@ body {
 .stat-box.active {
   outline: 3px solid #007bcd;
 }
+.cancelled-card {
+  opacity: 0.6;
+  background-color: #f7f7f7;
+  border-left: 6px solid #999;
+  pointer-events: none;
+}
