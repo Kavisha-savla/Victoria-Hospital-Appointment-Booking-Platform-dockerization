@@ -236,3 +236,34 @@ body {
 .top-actions .btn:hover {
   background-color: #005fa3;
 }
+.stats-widget {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin: 20px 0;
+  flex-wrap: wrap;
+}
+
+.stat-box {
+  background-color: #f0f7ff;
+  padding: 15px 25px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.stat-box.booked {
+  border-left: 6px solid #28a745;
+}
+
+.stat-box.cancelled {
+  border-left: 6px solid #dc3545;
+}
+
+.stat-box.rescheduled {
+  border-left: 6px solid #ffc107;
+}
+.stat-box.active {
+  outline: 3px solid #007bcd;
+}
