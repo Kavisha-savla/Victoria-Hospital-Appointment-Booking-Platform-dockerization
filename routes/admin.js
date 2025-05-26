@@ -7,13 +7,23 @@ router.get('/dashboard', isAdmin, (req, res) => {
   console.log('Admin dashboard accessed by:', req.session.user);
   res.sendFile(path.join(__dirname, '../views/adminDashboard.html'));
 });
-router.get('/api/appointments', isAdmin, async (req, res) => {
+router.get('/api/appointments', async (req, res) => {
   try {
-    const appointments = await Appointment.find();
+    const { status, department } = req.query;
+    const query = {};
+
+    if (status) query.status = status;
+    if (department) query.department = department;
+
+    console.log('Incoming query:', req.query);
+    console.log('MongoDB query:', query);
+
+    const appointments = await Appointment.find(query);
     res.json(appointments);
   } catch (err) {
     console.error('Error fetching appointments:', err);
-    res.status(500).json({ error: 'Failed to fetch appointments' });
+    res.status(500).json({ error: 'Server error' });
   }
 });
+
 module.exports = router;
