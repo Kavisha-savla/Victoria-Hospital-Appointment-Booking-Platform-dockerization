@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Dashboard - Victoria Hospital</title>
+  <link rel="stylesheet" href="/css/adminDashboard.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</head>
+<body>
+  
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <img src="/images/hospital-logo.jpg" alt="Logo" />
+      <h1>Victoria Multi Speciality Hospital</h1>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#" onclick="logout()">Logout</a></li>
+    </ul>
+  </nav>
+
+  
+  <main class="dashboard">
+    <h2>Admin Dashboard</h2>
+    <p>You can export all appointments using the button below.</p>
+
+    
+    <div class="top-actions">
+      <button onclick="exportAppointmentsToCSV()" class="btn">Export as CSV</button>
+    </div>
+  </main>
+
+  <script>
+    let appointmentsCache = [];
+
+   
+    window.onload = async function () {
+      try {
+        const res = await fetch('/admin/api/appointments');
+        const data = await res.json();
+        appointmentsCache = data;
+      } catch (err) {
+        console.error('Failed to fetch appointments:', err);
+      }
+    };
+
+   
+    function exportAppointmentsToCSV() {
+      if (!appointmentsCache || appointmentsCache.length === 0) {
+        alert("No appointments to export.");
+        return;
+      }
+
+      const headers = ["Name", "Phone", "Date", "Time", "Department", "Status"];
+      const rows = appointmentsCache.map(app => [
+        app.name,
+        app.phone,
+        new Date(app.date).toLocaleDateString(),
+        app.time,
+        app.department,
+        app.status || "booked"
+      ]);
+
+      let csvContent = "data:text/csv;charset=utf-8,"
+        + headers.join(",") + "\n"
+        + rows.map(row => row.join(",")).join("\n");
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "appointments.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+   
+    function logout() {
+      window.location.href = "/admin/login";
+    }
+  </script>
+</body>
+</html>
