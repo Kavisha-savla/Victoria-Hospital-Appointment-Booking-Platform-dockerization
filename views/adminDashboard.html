@@ -29,54 +29,90 @@
     </div>
   </main>
 
-  <script>
-    let appointmentsCache = [];
+<script>
+  let appointmentsCache = [];
 
-   
-    window.onload = async function () {
-      try {
-        const res = await fetch('/admin/api/appointments');
-        const data = await res.json();
-        appointmentsCache = data;
-      } catch (err) {
-        console.error('Failed to fetch appointments:', err);
-      }
-    };
+  window.onload = async function () {
+    try {
+      const res = await fetch('/admin/api/appointments');
+      const data = await res.json();
+      appointmentsCache = data;
+      renderAppointments(data);
+    } catch (err) {
+      console.error('Failed to fetch appointments:', err);
+    }
+  };
 
-   
-    function exportAppointmentsToCSV() {
-      if (!appointmentsCache || appointmentsCache.length === 0) {
-        alert("No appointments to export.");
-        return;
-      }
+  function renderAppointments(data) {
+    const existing = document.getElementById('appointmentsTable');
+    if (existing) existing.remove(); // avoid duplicates
 
-      const headers = ["Name", "Phone", "Date", "Time", "Department", "Status"];
-      const rows = appointmentsCache.map(app => [
-        app.name,
-        app.phone,
-        new Date(app.date).toLocaleDateString(),
-        app.time,
-        app.department,
-        app.status || "booked"
-      ]);
+    const container = document.createElement('div');
+    container.id = "appointmentsTable";
+    container.className = "appointments-container";
 
-      let csvContent = "data:text/csv;charset=utf-8,"
-        + headers.join(",") + "\n"
-        + rows.map(row => row.join(",")).join("\n");
+    document.querySelector('.dashboard').appendChild(container);
+    container.innerHTML = '';
 
-      const encodedUri = encodeURI(csvContent);
-      const link = document.createElement("a");
-      link.setAttribute("href", encodedUri);
-      link.setAttribute("download", "appointments.csv");
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+    if (data.length === 0) {
+      container.innerHTML = '<p>No appointments found.</p>';
+      return;
     }
 
-   
-    function logout() {
-      window.location.href = "/admin/login";
+    data.forEach(app => {
+      const item = document.createElement('div');
+      item.className = 'appointment-card';
+      const dateStr = new Date(app.date).toLocaleDateString();
+
+      item.innerHTML = `
+        <div class="row-line">
+          <span><strong>Name:</strong> ${app.name}</span>
+          <span><strong>Phone:</strong> ${app.phone}</span>
+          <span><strong>Date:</strong> ${dateStr}</span>
+        </div>
+        <div class="row-line">
+          <span><strong>Time:</strong> ${app.time}</span>
+          <span><strong>Department:</strong> ${app.department}</span>
+          <span><strong>Status:</strong> ${app.status || 'booked'}</span>
+        </div>
+      `;
+      container.appendChild(item);
+    });
+  }
+
+  function exportAppointmentsToCSV() {
+    if (!appointmentsCache || appointmentsCache.length === 0) {
+      alert("No appointments to export.");
+      return;
     }
-  </script>
+
+    const headers = ["Name", "Phone", "Date", "Time", "Department", "Status"];
+    const rows = appointmentsCache.map(app => [
+      app.name,
+      app.phone,
+      new Date(app.date).toLocaleDateString(),
+      app.time,
+      app.department,
+      app.status || "booked"
+    ]);
+
+    let csvContent = "data:text/csv;charset=utf-8,"
+      + headers.join(",") + "\n"
+      + rows.map(row => row.join(",")).join("\n");
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "appointments.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  function logout() {
+    window.location.href = "/admin/login";
+  }
+</script>
+
 </body>
 </html>
