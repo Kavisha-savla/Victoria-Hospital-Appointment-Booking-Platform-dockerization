@@ -16,92 +16,141 @@
       <li><a href="#" onclick="logout()">Logout</a></li>
     </ul>
   </nav>
+
   <main class="dashboard">
     <h2>Admin Dashboard</h2>
+
+    <div class="stats-widget">
+      <div class="stat-box booked" onclick="filterByStatus('booked')">
+        Booked: <span id="count-booked">0</span>
+      </div>
+      <div class="stat-box rescheduled" onclick="filterByStatus('rescheduled')">
+        Rescheduled: <span id="count-rescheduled">0</span>
+      </div>
+      <div class="stat-box cancelled" onclick="filterByStatus('cancelled')">
+        Cancelled: <span id="count-cancelled">0</span>
+      </div>
+    </div>
+
     <p>You can export all appointments using the button below.</p>
 
-    
     <div class="top-actions">
       <button onclick="exportAppointmentsToCSV()" class="btn">Export as CSV</button>
     </div>
   </main>
 
-<script>
-  let appointmentsCache = [];
+  <script>
+    let appointmentsCache = [];
+    let currentFilter = '';
 
-  window.onload = async function () {
-    try {
-      const res = await fetch('/admin/api/appointments');
-      const data = await res.json();
-      appointmentsCache = data;
-      renderAppointments(data);
-    } catch (err) {
-      console.error('Failed to fetch appointments:', err);
+    window.onload = async function () {
+      try {
+        const res = await fetch('/admin/api/appointments');
+        const data = await res.json();
+        appointmentsCache = data;
+        renderAppointments(data);
+        renderStats(data);
+      } catch (err) {
+        console.error('Failed to fetch appointments:', err);
+      }
+    };
+
+    function renderAppointments(data) {
+      const existing = document.getElementById('appointmentsTable');
+      if (existing) existing.remove();
+
+      const container = document.createElement('div');
+      container.id = "appointmentsTable";
+      container.className = "appointments-container";
+
+      document.querySelector('.dashboard').appendChild(container);
+      container.innerHTML = '';
+
+      if (data.length === 0) {
+        container.innerHTML = '<p>No appointments found.</p>';
+        return;
+      }
+
+      data.forEach(app => {
+        const item = document.createElement('div');
+        item.className = 'appointment-card';
+        const dateStr = new Date(app.date).toLocaleDateString();
+
+        item.innerHTML = `
+          <div class="row-line">
+            <span><strong>Name:</strong> ${app.name}</span>
+            <span><strong>Phone:</strong> ${app.phone}</span>
+            <span><strong>Date:</strong> ${dateStr}</span>
+          </div>
+          <div class="row-line">
+            <span><strong>Time:</strong> ${app.time}</span>
+            <span><strong>Department:</strong> ${app.department}</span>
+            <span><strong>Status:</strong> ${app.status || 'booked'}</span>
+          </div>
+        `;
+
+        container.appendChild(item);
+      });
     }
-  };
-  function renderAppointments(data) {
-    const existing = document.getElementById('appointmentsTable');
-    if (existing) existing.remove();
 
-    const container = document.createElement('div');
-    container.id = "appointmentsTable";
-    container.className = "appointments-container";
+    function renderStats(data) {
+      const booked = data.filter(a => (a.status || 'booked') === 'booked').length;
+      const cancelled = data.filter(a => a.status === 'cancelled').length;
+      const rescheduled = data.filter(a => a.status === 'rescheduled').length;
 
-    document.querySelector('.dashboard').appendChild(container);
-    container.innerHTML = '';
-
-    if (data.length === 0) {
-      container.innerHTML = '<p>No appointments found.</p>';
-      return;
+      document.getElementById('count-booked').textContent = booked;
+      document.getElementById('count-cancelled').textContent = cancelled;
+      document.getElementById('count-rescheduled').textContent = rescheduled;
     }
-    data.forEach(app => {
-      const item = document.createElement('div');
-      item.className = 'appointment-card';
-      const dateStr = new Date(app.date).toLocaleDateString();
-      item.innerHTML = `
-        <div class="row-line">
-          <span><strong>Name:</strong> ${app.name}</span>
-          <span><strong>Phone:</strong> ${app.phone}</span>
-          <span><strong>Date:</strong> ${dateStr}</span>
-        </div>
-        <div class="row-line">
-          <span><strong>Time:</strong> ${app.time}</span>
-          <span><strong>Department:</strong> ${app.department}</span>
-          <span><strong>Status:</strong> ${app.status || 'booked'}</span>
-        </div>
-      `;
-      container.appendChild(item);
-    });
-  }
-  function exportAppointmentsToCSV() {
-    if (!appointmentsCache || appointmentsCache.length === 0) {
-      alert("No appointments to export.");
-      return;
-    }
-    const headers = ["Name", "Phone", "Date", "Time", "Department", "Status"];
-    const rows = appointmentsCache.map(app => [
-      app.name,
-      app.phone,
-      new Date(app.date).toLocaleDateString(),
-      app.time,
-      app.department,
-      app.status || "booked"
-    ]);
-    let csvContent = "data:text/csv;charset=utf-8,"
-      + headers.join(",") + "\n"
-      + rows.map(row => row.join(",")).join("\n");
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "appointments.csv");
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  }
 
-  function logout() {
-    window.location.href = "/admin/login";
-  }
-</script>
+    function filterByStatus(status) {
+      document.querySelectorAll('.stat-box').forEach(box => box.classList.remove('active'));
+
+      if (currentFilter === status) {
+        renderAppointments(appointmentsCache);
+        currentFilter = '';
+      } else {
+        const filtered = appointmentsCache.filter(a =>
+          (a.status || 'booked').toLowerCase() === status.toLowerCase()
+        );
+        renderAppointments(filtered);
+        currentFilter = status;
+        document.querySelector(`.stat-box.${status}`).classList.add('active');
+      }
+    }
+
+    function exportAppointmentsToCSV() {
+      if (!appointmentsCache || appointmentsCache.length === 0) {
+        alert("No appointments to export.");
+        return;
+      }
+
+      const headers = ["Name", "Phone", "Date", "Time", "Department", "Status"];
+      const rows = appointmentsCache.map(app => [
+        app.name,
+        app.phone,
+        new Date(app.date).toLocaleDateString(),
+        app.time,
+        app.department,
+        app.status || "booked"
+      ]);
+
+      let csvContent = "data:text/csv;charset=utf-8,"
+        + headers.join(",") + "\n"
+        + rows.map(row => row.join(",")).join("\n");
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "appointments.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function logout() {
+      window.location.href = "/admin/login";
+    }
+  </script>
 </body>
 </html>
