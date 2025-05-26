@@ -39,6 +39,7 @@
     </div>
   </main>
 
+  <script src="/socket.io/socket.io.js"></script>
   <script>
     let appointmentsCache = [];
     let currentFilter = '';
@@ -226,6 +227,41 @@
     function logout() {
       window.location.href = "/admin/login";
     }
+    const socket = io();
+    socket.on('connect', () => {
+  console.log('✅ Admin connected to Socket.IO:', socket.id);
+});
+
+socket.on('appointment:booked', (appt) => {
+  console.log('New appointment booked!');
+  if (currentFilter === '' || currentFilter === 'booked') {
+    renderAppointments([...appointmentsCache, appt]);
+    appointmentsCache.push(appt);
+  }
+});
+
+socket.on('appointment:cancelled', (appt) => {
+  console.log('Appointment cancelled!');
+  if (currentFilter === '' || currentFilter === 'cancelled') {
+    const updated = appointmentsCache.map(a =>
+      a._id === appt._id ? appt : a
+    );
+    appointmentsCache = updated;
+    renderAppointments(updated);
+  }
+});
+
+socket.on('appointment:rescheduled', (appt) => {
+  console.log('Appointment rescheduled!');
+  if (currentFilter === '' || currentFilter === 'rescheduled') {
+    const updated = appointmentsCache.map(a =>
+      a._id === appt._id ? appt : a
+    );
+    appointmentsCache = updated;
+    renderAppointments(updated);
+  }
+});
+
   </script>
 </body>
 </html>
