@@ -32,9 +32,13 @@
       </div>
     </div>
 
-    <p>You can export all appointments using the button below.</p>
-
+    
+<div>
+<input type="text" id="searchInput" placeholder="Search by name, phone, department, or status..." class="search-bar" />
+</div>
+<p>You can export all appointments using the button below.</p>
     <div class="top-actions">
+      
       <button onclick="exportAppointmentsToCSV()" class="btn">Export as CSV</button>
     </div>
 
@@ -147,7 +151,18 @@
       document.getElementById('count-cancelled').textContent = data.filter(a => a.status === 'cancelled').length;
       document.getElementById('count-rescheduled').textContent = data.filter(a => a.status === 'rescheduled').length;
     }
+document.getElementById("searchInput").addEventListener("input", function (e) {
+  const query = e.target.value.toLowerCase();
 
+  const filtered = appointmentsCache.filter(app =>
+    app.name?.toLowerCase().includes(query) ||
+    app.phone?.toLowerCase().includes(query) ||
+    app.department?.toLowerCase().includes(query) ||
+    (app.status || 'booked').toLowerCase().includes(query)
+  );
+
+  renderAppointments(filtered);
+});
     function filterByStatus(status) {
       document.querySelectorAll('.stat-box').forEach(box => box.classList.remove('active'));
       currentFilter = (currentFilter === status) ? '' : status;

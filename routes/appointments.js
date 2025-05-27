@@ -23,18 +23,23 @@ router.post('/book', async (req, res) => {
     });
 
     const user = await User.findById(userId);
-    // await sendEmail(user.email, "Appointment Confirmation", `
-    //   <h3>Your appointment is booked!</h3>
-    //   <p><strong>Name:</strong> ${name}</p>
-    //   <p><strong>Age:</strong> ${age}</p>
-    //   <p><strong>Phone:</strong> ${phone}</p>
-    //   <p><strong>Gender:</strong> ${gender}</p>
-    //   <p><strong>Department:</strong> ${department}</p>
-    //   <p><strong>Service:</strong> ${service}</p>
-    //   <p><strong>Date:</strong> ${new Date(date).toDateString()}</p>
-    //   <p><strong>Time:</strong> ${time}</p>
-    // `);
-
+    await sendEmail(
+  user.email,
+  "Appointment Confirmation – Victoria Multi Speciality Hospital",
+  `
+  <p>Dear ${name},</p>
+  <p>Your appointment has been successfully booked. Here are the details:</p>
+  <ul>
+    <li><strong>Date:</strong> ${new Date(date).toDateString()}</li>
+    <li><strong>Time:</strong> ${time}</li>
+    <li><strong>Department:</strong> ${department}</li>
+    <li><strong>Service:</strong> ${service}</li>
+  </ul>
+  <p>Please arrive 10–15 minutes early for check-in. If needed, contact us at +61 1800 000 911 or support@victoriahospital.com.</p>
+  <p>Warm regards,<br/>Victoria Multi Speciality Hospital – Administration Team</p>
+  `,
+  "admin@victoriahospital.com" 
+);
     io.emit('appointment:booked', appointment);
     res.status(201).json({ message: "Appointment booked and email sent." });
   } catch (e) {
@@ -54,12 +59,20 @@ router.post('/cancel/:id', async (req, res) => {
     );
 
     const user = await User.findById(appointment.userId);
-    // await sendEmail(user.email, "Appointment Cancelled", `
-    //   <h3>Your appointment has been cancelled.</h3>
-    //   <p><strong>Service:</strong> ${appointment.service}</p>
-    // `);
+    await sendEmail(
+  user.email,
+  "Appointment Cancelled – Victoria Multi Speciality Hospital",
+  `
+  <p>Dear ${user.name || appointment.name},</p>
+  <p>Your appointment scheduled on <strong>${new Date(appointment.date).toDateString()}</strong> at <strong>${appointment.time}</strong> for <strong>${appointment.service}</strong> in the <strong>${appointment.department}</strong> department has been cancelled.</p>
+  <p>If you’d like to reschedule, please reach out at +61 1800 000 911 or support@victoriahospital.com.</p>
+  <p>Kind regards,<br/>Victoria Multi Speciality Hospital – Administration Team</p>
+  `,
+  "admin@victoriahospital.com"
+);
 
-    io.emit('appointment:cancelled', appointment); // ✅ Live update
+
+    io.emit('appointment:cancelled', appointment);
     res.send('Appointment cancelled and email sent.');
   } catch {
     res.status(500).send('Error cancelling appointment');
@@ -79,11 +92,24 @@ router.post('/reschedule/:id', async (req, res) => {
     }, { new: true });
 
     const user = await User.findById(appointment.userId);
-    // await sendEmail(user.email, "Appointment Rescheduled", `
-    //   <h3>Your appointment has been rescheduled.</h3>
-    //   <p><strong>New Date:</strong> ${new Date(newDate).toDateString()}</p>
-    //   <p><strong>New Time:</strong> ${newTime}</p>
-    // `);
+    await sendEmail(
+  user.email,
+  "Appointment Rescheduled – Victoria Multi Speciality Hospital",
+  `
+  <p>Dear ${user.name || name},</p>
+  <p>Your appointment has been successfully rescheduled. Here are the updated details:</p>
+  <ul>
+    <li><strong>New Date:</strong> ${new Date(newDate).toDateString()}</li>
+    <li><strong>New Time:</strong> ${newTime}</li>
+    <li><strong>Department:</strong> ${appointment.department}</li>
+    <li><strong>Service:</strong> ${appointment.service}</li>
+  </ul>
+  <p>If you need to change it again, call +61 1800 000 911 or email support@victoriahospital.com.</p>
+  <p>Take care,<br/>Victoria Multi Speciality Hospital – Administration Team</p>
+  `,
+  "admin@victoriahospital.com"
+);
+
 
     io.emit('appointment:rescheduled', appointment);
     res.send('Appointment rescheduled and email sent.');
