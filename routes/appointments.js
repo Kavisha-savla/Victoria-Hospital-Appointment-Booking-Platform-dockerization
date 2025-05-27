@@ -23,17 +23,17 @@ router.post('/book', async (req, res) => {
     });
 
     const user = await User.findById(userId);
-    await sendEmail(user.email, "Appointment Confirmation", `
-      <h3>Your appointment is booked!</h3>
-      <p><strong>Name:</strong> ${name}</p>
-      <p><strong>Age:</strong> ${age}</p>
-      <p><strong>Phone:</strong> ${phone}</p>
-      <p><strong>Gender:</strong> ${gender}</p>
-      <p><strong>Department:</strong> ${department}</p>
-      <p><strong>Service:</strong> ${service}</p>
-      <p><strong>Date:</strong> ${new Date(date).toDateString()}</p>
-      <p><strong>Time:</strong> ${time}</p>
-    `);
+    // await sendEmail(user.email, "Appointment Confirmation", `
+    //   <h3>Your appointment is booked!</h3>
+    //   <p><strong>Name:</strong> ${name}</p>
+    //   <p><strong>Age:</strong> ${age}</p>
+    //   <p><strong>Phone:</strong> ${phone}</p>
+    //   <p><strong>Gender:</strong> ${gender}</p>
+    //   <p><strong>Department:</strong> ${department}</p>
+    //   <p><strong>Service:</strong> ${service}</p>
+    //   <p><strong>Date:</strong> ${new Date(date).toDateString()}</p>
+    //   <p><strong>Time:</strong> ${time}</p>
+    // `);
 
     io.emit('appointment:booked', appointment);
     res.status(201).json({ message: "Appointment booked and email sent." });
@@ -54,10 +54,10 @@ router.post('/cancel/:id', async (req, res) => {
     );
 
     const user = await User.findById(appointment.userId);
-    await sendEmail(user.email, "Appointment Cancelled", `
-      <h3>Your appointment has been cancelled.</h3>
-      <p><strong>Service:</strong> ${appointment.service}</p>
-    `);
+    // await sendEmail(user.email, "Appointment Cancelled", `
+    //   <h3>Your appointment has been cancelled.</h3>
+    //   <p><strong>Service:</strong> ${appointment.service}</p>
+    // `);
 
     io.emit('appointment:cancelled', appointment); // ✅ Live update
     res.send('Appointment cancelled and email sent.');
@@ -79,11 +79,11 @@ router.post('/reschedule/:id', async (req, res) => {
     }, { new: true });
 
     const user = await User.findById(appointment.userId);
-    await sendEmail(user.email, "Appointment Rescheduled", `
-      <h3>Your appointment has been rescheduled.</h3>
-      <p><strong>New Date:</strong> ${new Date(newDate).toDateString()}</p>
-      <p><strong>New Time:</strong> ${newTime}</p>
-    `);
+    // await sendEmail(user.email, "Appointment Rescheduled", `
+    //   <h3>Your appointment has been rescheduled.</h3>
+    //   <p><strong>New Date:</strong> ${new Date(newDate).toDateString()}</p>
+    //   <p><strong>New Time:</strong> ${newTime}</p>
+    // `);
 
     io.emit('appointment:rescheduled', appointment);
     res.send('Appointment rescheduled and email sent.');
