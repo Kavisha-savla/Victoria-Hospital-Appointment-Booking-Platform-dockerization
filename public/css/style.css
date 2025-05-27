@@ -4,7 +4,6 @@ body {
   background-color: #fff;
 }
 
-/* Navbar */
 .navbar {
   background-color: #007bcd;
   color: white;
@@ -45,7 +44,6 @@ body {
   color: #ffffff;
 }
 
-/* Hero Section */
 .hero {
   display: flex;
   flex-wrap: wrap;
@@ -100,7 +98,6 @@ body {
   color: #28a745;
 }
 
-/* Call to Action Button */
 .hero-text .btn {
   background-color: #007bcd;
   color: white;
@@ -111,7 +108,6 @@ body {
   display: inline-block;
 }
 
-/* Hero Image */
 .hero-image img {
   max-width: 450px;
   width: 100%;
@@ -357,11 +353,10 @@ body {
   transition: box-shadow 0.3s ease;
 }
 
-/* Smaller Button */
 .form-container button {
   width: 40%;
-  padding: 8px 15px;  /* Decreased padding */
-  font-size: 1em;  /* Slightly smaller font size */
+  padding: 8px 15px;  
+  font-size: 1em;  
   background-color: #007bcd;
   color: white;
   font-weight: bold;
