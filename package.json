@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/AishuN1107/Victoria-Hospital-Appointment-Booking-Platform#readme",
   "dependencies": {
+    "@sendgrid/mail": "^8.1.5",
     "bcryptjs": "^3.0.2",
     "body-parser": "^2.2.0",
     "dotenv": "^16.5.0",

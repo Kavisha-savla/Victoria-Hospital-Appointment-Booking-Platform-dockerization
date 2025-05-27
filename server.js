@@ -53,13 +53,5 @@ app.get('/book.html', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'book.html'));
 });
 
-io.on('connection', (socket) => {
-  console.log(`New client connected: ${socket.id}`);
-
-  socket.on('disconnect', () => {
-    console.log(`Client disconnected: ${socket.id}`);
-  });
-});
-
 const PORT = process.env.PORT || 9000;
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
