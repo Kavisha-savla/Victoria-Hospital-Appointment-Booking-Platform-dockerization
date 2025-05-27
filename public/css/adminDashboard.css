@@ -3,8 +3,7 @@ body {
     font-family: 'Segoe UI', sans-serif;
     background-color: #f4f9ff;
   }
-  
-  /* Navbar */
+
   .navbar {
     background-color: #007bcd;
     color: white;
@@ -44,8 +43,7 @@ body {
     text-decoration: none;
     font-weight: bold;
   }
-  
-  /* Dashboard */
+
   .dashboard {
     max-width: 900px;
     margin: 0 auto;
@@ -86,8 +84,7 @@ body {
   .btn:hover {
     background-color: #005a9e;
   }
-  
-  /* Appointments */
+
   .appointments-container {
     display: flex;
     flex-direction: column;
@@ -158,6 +155,7 @@ body {
     border-radius: 6px;
     display: block;
   }
+
   .appointment-card .appt-heading-row,
   .appointment-card .appt-value-row {
     display: grid;
@@ -180,8 +178,8 @@ body {
   
   .row-line {
     display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 3 columns per row */
-    gap: 25px; /* wider gap between fields */
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
     font-size: 15px;
     margin-bottom: 12px;
   }

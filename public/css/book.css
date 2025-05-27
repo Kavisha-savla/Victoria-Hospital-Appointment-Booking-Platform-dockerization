@@ -4,7 +4,6 @@ body {
     background-color: #f4f9ff;
   }
   
-  /* Navbar */
   .navbar {
     background-color: #007bcd;
     color: white;
@@ -44,8 +43,7 @@ body {
     text-decoration: none;
     font-weight: bold;
   }
-  
-  /* Form Styling */
+
   .form-container {
     max-width: 500px;
     background: white;
