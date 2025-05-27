@@ -276,3 +276,29 @@ body {
   border-left: 6px solid #999;
   pointer-events: none;
 }
+.card-buttons {
+  margin-top: 15px;
+  display: flex;
+  gap: 10px;
+}
+
+.card-buttons button {
+  padding: 8px 14px;
+  background-color: #007bcd;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.card-buttons button:hover {
+  background-color: #005fa3;
+}
+
+.reschedule-form {
+  margin-top: 15px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
