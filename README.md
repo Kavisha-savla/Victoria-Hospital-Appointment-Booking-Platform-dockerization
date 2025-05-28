@@ -89,16 +89,16 @@ node server.js
 
 ---
 
-##  Usage
+## 🧪 Usage
 
-###  For Users:
+### 👩‍⚕️ For Users:
 - Register or log in to your account
 - Book an appointment by selecting date, time, department, and description
 - Cancel or reschedule appointments via the user dashboard
 - Receive confirmation, cancellation, and reschedule emails instantly
 - Chatbot assistant available to guide users through the process
 
-###  For Admins:
+### 👨‍💼 For Admins:
 - Log in to the Admin Panel via the `/admin/dashboard` route
 - View all appointments with filters (status: booked, cancelled, rescheduled | department-wise)
 - Inline reschedule and cancel functionality built directly into appointment cards
@@ -114,7 +114,7 @@ Visit: `http://localhost:9000`
 
 ---
 
-##  Admin Features
+## 🛠️ Admin Features
 
 -  **Admin Dashboard** – Access, filter, and manage all appointments in one place.
 -  **Search & Filter** – By status (booked, cancelled, rescheduled) and department.
@@ -129,21 +129,21 @@ Visit: `http://localhost:9000`
 
 ---
 
-##  Roadmap
+## 🛣 Roadmap
 
-| Feature                             | Status         | Sprint     |
-|-------------------------------------|----------------|------------|
-| User Registration & Login           | ✅ Completed    | Sprint 1   |
-| Appointment Booking System          | ✅ Completed    | Sprint 1   |
-| Admin Dashboard with Filtering      | ✅ Completed    | Sprint 2   |
-| Real-time Updates (Socket.IO)       | ✅ Completed    | Sprint 2   |
-| Email Notifications (Nodemailer)    | ✅ Improved     | Sprint 2   |
-| Disable Booked Slots                | ✅ Implemented  | Sprint 2   |
-| Visual Analytics (Chart.js)         | ✅ Completed    | Sprint 2   |
-| Export as PDF/CSV                   | ✅ Completed    | Sprint 2   |
-| Chatbot Assistant (Botpress)        | ✅ Integrated   | Sprint 2   |
-| Docker Deployment                   | ✅ Configured   | Sprint 2   |
-| Inline Reschedule/Cancel UI         | ✅ Completed    | Sprint 2   |
+| Feature                             | Status         |      
+|-------------------------------------|----------------|
+| User Registration & Login           | ✅             | 
+| Appointment Booking System          | ✅             | 
+| Admin Dashboard with Filtering      | ✅             |  
+| Real-time Updates (Socket.IO)       | ✅             | 
+| Email Notifications (Nodemailer)    | ✅             | 
+| Disable Booked Slots                | ✅             | 
+| Visual Analytics (Chart.js)         | ✅             | 
+| Export as PDF/CSV                   | ✅             | 
+| Chatbot Assistant (Botpress)        | ✅             | 
+| Docker Deployment                   | ✅             | 
+| Inline Reschedule/Cancel UI         | ✅             | 
 
 ---
 
