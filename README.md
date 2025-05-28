@@ -89,33 +89,65 @@ node server.js
 
 ---
 
-## 🧪 Usage
+##  Usage
 
-- Register or log in
-- Book an appointment (date, time, details)
-- Cancel or reschedule via dashboard
-- Chatbot available for guidance
-- Receive confirmation emails in real-time
+###  For Users:
+- Register or log in to your account
+- Book an appointment by selecting date, time, department, and description
+- Cancel or reschedule appointments via the user dashboard
+- Receive confirmation, cancellation, and reschedule emails instantly
+- Chatbot assistant available to guide users through the process
+
+###  For Admins:
+- Log in to the Admin Panel via the `/admin/dashboard` route
+- View all appointments with filters (status: booked, cancelled, rescheduled | department-wise)
+- Inline reschedule and cancel functionality built directly into appointment cards
+- Real-time updates across all dashboards using **Socket.IO**
+- Email notifications with **BCC support** to track appointment changes
+- View **daily and weekly statistics** via integrated **Chart.js analytics**
+- Export appointment data as **PDF** or **CSV** with one click
+- Chatbot assistant for basic inquiries and automation support
+- **Booked slots are disabled** to prevent double booking
+- Fully supported **Docker deployment** for easy containerized hosting
 
 Visit: `http://localhost:9000`
 
 ---
 
-## 🛣 Roadmap
+##  Admin Features
 
-- [x] Disable already-booked slots
-- [x] Email integration with Nodemailer
-- [x] Real-time updates via Socket.IO
-- [x] Chatbot with Botpress
-- [ ] Admin dashboard and analytics
-- [ ] PDF/CSV exports for appointments
-- [ ] Docker deployment
-
-See the [open issues](https://github.com/AishuN1107/Victoria-Hospital-Appointment-Booking-Platform/issues) for more ideas.
+-  **Admin Dashboard** – Access, filter, and manage all appointments in one place.
+-  **Search & Filter** – By status (booked, cancelled, rescheduled) and department.
+-  **Disable Already-Booked Slots** – Prevents multiple users from booking the same time.
+-  **Nodemailer Email Integration** – Email alerts to users and BCC to admin for all actions.
+-  **Inline Reschedule & Cancel** – Adjust date/time or cancel without leaving the dashboard.
+-  **Real-Time Updates** – Uses Socket.IO to reflect all changes live on both dashboards.
+-  **Analytics with Chart.js** – Graphs for daily and weekly appointment trends.
+-  **Export Appointments** – One-click export as PDF or CSV for reporting needs.
+-  **Chatbot Assistant** – AI chatbot built with Botpress for admin and user support.
+-  **Docker Deployment** – Seamlessly deployable with Docker for scalable environments.
 
 ---
 
-## 🤝 Contributing
+##  Roadmap
+
+| Feature                             | Status         | Sprint     |
+|-------------------------------------|----------------|------------|
+| User Registration & Login           | ✅ Completed    | Sprint 1   |
+| Appointment Booking System          | ✅ Completed    | Sprint 1   |
+| Admin Dashboard with Filtering      | ✅ Completed    | Sprint 2   |
+| Real-time Updates (Socket.IO)       | ✅ Completed    | Sprint 2   |
+| Email Notifications (Nodemailer)    | ✅ Improved     | Sprint 2   |
+| Disable Booked Slots                | ✅ Implemented  | Sprint 2   |
+| Visual Analytics (Chart.js)         | ✅ Completed    | Sprint 2   |
+| Export as PDF/CSV                   | ✅ Completed    | Sprint 2   |
+| Chatbot Assistant (Botpress)        | ✅ Integrated   | Sprint 2   |
+| Docker Deployment                   | ✅ Configured   | Sprint 2   |
+| Inline Reschedule/Cancel UI         | ✅ Completed    | Sprint 2   |
+
+---
+
+##  Contributing
 
 Contributions make the open source community great!
 
