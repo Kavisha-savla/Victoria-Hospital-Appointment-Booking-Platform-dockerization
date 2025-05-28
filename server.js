@@ -11,6 +11,7 @@ const appointmentRoutes = require('./routes/appointments');
 const adminAuthRoutes = require('./routes/adminAuth');
 const adminRoutes = require('./routes/admin');
 const doctorRoutes = require('./routes/doctorRoutes');
+const departmentRoutes = require('./routes/departmentRoutes');
 
 dotenv.config();
 const app = express();
@@ -38,7 +39,7 @@ app.use('/appointments', appointmentRoutes);
 app.use('/admin', adminAuthRoutes);
 app.use('/admin', adminRoutes);
 app.use('/api/doctors', doctorRoutes);
-
+app.use('/api/departments', departmentRoutes);
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'index.html'));
@@ -58,6 +59,8 @@ app.get('/book.html', (req, res) => {
 app.get('/manageDoctors.html', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'manageDoctors.html'));
 });
-
+app.get('/manageDepartments.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'manageDepartments.html'));
+});
 const PORT = process.env.PORT || 9000;
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
