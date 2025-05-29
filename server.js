@@ -62,5 +62,15 @@ app.get('/manageDoctors.html', (req, res) => {
 app.get('/manageDepartments.html', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'manageDepartments.html'));
 });
+
+app.get('/api/student', (req, res) => {
+  res.json({
+    name: "Kavisha Savla",
+    studentId: "s225053119"
+  });
+}); 
+
 const PORT = process.env.PORT || 9000;
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+
